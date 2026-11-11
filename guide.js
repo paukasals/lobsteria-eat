@@ -67,7 +67,7 @@ var D=[
  ['Ceviche Tropical de Maracuyá','Leche de tigre de maracuyá',['Disfrútalo en menos de 60 minutos, o a la nevera.','Usa los chips de plátano como cuchara, o desmorónalos encima.','No lo calientes.'],'El limón sigue “cocinando” el pescado. <b>Cuanto antes, mejor.</b>'],'ceviche passion fruit maracuya tropical'],
 ['oysters','oyster','WZY7SIHRNYL3QZID67DVF2L2.png','t60',
  ['Raw Oysters','Classic · Passion · Leche de Tigre',['Enjoy within 60 minutes, or refrigerate.','Add a little sauce or lime to each one.','Slurp from the wide end.'],'Not eating now? <b>Fridge right away.</b>'],
- ['Ostras crudas','Clásicas · Maracuyá · Leche de Tigre',['Disfrútalas en menos de 60 minutos, o a la nevera.','Pon un poco de salsa o limón en cada una.','Sórbelas por el lado ancho.'],'¿No las comes ya? <b>A la nevera enseguida.</b>'],'oysters raw ostras crudas passion maracuya leche tigre nikkei'],
+ ['Ostras crudas','Clásicas · Maracuyá · Leche de Tigre',['Disfrútalas en menos de 60 minutos, o a la nevera.','Pon un poco de salsa o limón en cada una.','Sórbelas por el lado ancho.'],'¿No las comes ya? <b>A la nevera enseguida.</b>'],'oysters raw ostras crudas passion maracuya leche tigre'],
 ['oysters','oyster','NBP6TROVUMX3C7O5VRRUSB22.png','now',
  ['Grilled Oysters','Rockefeller · Garlic butter',['Open the box right away.','Squeeze the lime.','Eat them first, right away.'],'Grilled and torched to order.'],
  ['Ostras a la parrilla','Rockefeller · Mantequilla de ajo',['Abre la caja enseguida.','Exprime el limón.','Cómetelas primero, enseguida.'],'A la parrilla y flameadas al momento.'],'rockefeller garlic grilled ostras ajo parrilla'],
