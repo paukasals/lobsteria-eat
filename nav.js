@@ -140,5 +140,47 @@
     if (badge !== want) C.lastChild.textContent = want;
   }
 
-  if (d.readyState === 'loading') d.addEventListener('DOMContentLoaded', init); else init();
+  /* Hover card on the header "Visit & Contact" link (desktop / hover devices only). */
+  function visitCard() {
+    if (!matchMedia('(hover:hover)').matches) return;
+    var link = [].slice.call(d.querySelectorAll('a.nav__link[href*="visit-and-contact"]')).find(function (a) { return a.offsetHeight; });
+    if (!link) return setTimeout(visitCard, 700);
+    var MAPS = 'https://www.google.com/maps/search/?api=1&query=LOBSTERIA%2C%20144%20NE%2027th%20St%2C%20Miami%2C%20FL%2033137';
+    d.head.insertAdjacentHTML('beforeend', '<style>' +
+      '#lvc{position:fixed;z-index:30;width:300px;display:none;background:#FBF1E1;color:' + NAVY + ';border-radius:12px;box-shadow:0 8px 28px #0003;padding:18px;font:14px/1.45 "Source Sans 3",sans-serif;box-sizing:border-box;text-align:left}' +
+      '#lvc.on{display:block}' +
+      '#lvc h4{margin:0 0 12px;font:700 15px Chivo,sans-serif;letter-spacing:.04em}' +
+      '#lvc .r{display:flex;gap:10px;margin-bottom:10px}' +
+      '#lvc .r>span:first-child{flex:none;width:20px;font-size:16px;line-height:1.3}' +
+      '#lvc a{color:' + NAVY + ';font-weight:600}' +
+      '#lvc .b{display:flex;gap:8px;margin:14px 0 10px}' +
+      '#lvc .b a{flex:1;text-align:center;border-radius:99px;padding:9px 6px;font:700 13px Chivo,sans-serif;text-decoration:none}' +
+      '#lvc .p{background:' + RED + ';color:#fff}' +
+      '#lvc .s{border:1px solid ' + NAVY + '55}' +
+      '#lvc .m{font-size:13px}' +
+      '</style>');
+    var V = d.createElement('div'); V.id = 'lvc';
+    V.innerHTML = '<h4>LOBSTERIA · WYNWOOD</h4>' +
+      '<div class="r"><span>📍</span><span><a href="' + MAPS + '" target="_blank" rel="noopener">144 NE 27th St<br>Miami, FL 33137</a><br>Look for the 1976 Airstream</span></div>' +
+      '<div class="r"><span>🕒</span><span>Open nightly <b>5pm–2am</b><br>Pickup &amp; delivery on lobsteria.co</span></div>' +
+      '<div class="r"><span>📞</span><span><a href="tel:+17868507848">(786) 850-7848</a><br>Call, text or <a href="https://wa.me/17868507848" target="_blank" rel="noopener">WhatsApp</a></span></div>' +
+      '<div class="b"><a class="p" href="' + MAPS + '" target="_blank" rel="noopener">Directions</a><a class="s" href="tel:+17868507848">Call</a></div>' +
+      '<a class="m" href="/visit-and-contact">Map &amp; full contact details →</a>';
+    d.body.appendChild(V);
+    var t;
+    function show() {
+      clearTimeout(t);
+      var r = link.getBoundingClientRect();
+      V.style.top = (r.bottom + 8) + 'px';
+      V.style.left = Math.max(8, Math.min(innerWidth - 308, r.left + r.width / 2 - 150)) + 'px';
+      V.className = 'on';
+    }
+    function hide() { t = setTimeout(function () { V.className = ''; }, 250); }
+    link.addEventListener('mouseenter', show); link.addEventListener('mouseleave', hide);
+    V.addEventListener('mouseenter', function () { clearTimeout(t); }); V.addEventListener('mouseleave', hide);
+    addEventListener('scroll', function () { V.className = ''; }, { passive: true });
+  }
+
+  function start() { init(); visitCard(); }
+  if (d.readyState === 'loading') d.addEventListener('DOMContentLoaded', start); else start();
 })();
