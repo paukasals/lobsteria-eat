@@ -194,6 +194,23 @@
     link.addEventListener('mouseleave', hideVisit);
   }
 
-  function start() { buildVisit(); init(); headerLink(); }
+  /* Homepage: Google rating line under the hero text (the hero has no buttons to anchor to since 2026-11-21). */
+  var revBusy = 0;
+  function heroReviews() {
+    if (location.pathname.replace(/\/$/, '') !== '' || revBusy || d.querySelector('.lgl') || !window.LGRF || !window.LGRS) return;
+    var h = [].slice.call(d.querySelectorAll('h1')).find(function (e) { return e.offsetHeight && e.closest('.element-group'); });
+    if (!h) return;
+    var g = h.closest('.element-group');
+    revBusy = 1;
+    LGRF().then(function (r) {
+      revBusy = 0;
+      if (!r.rating || d.querySelector('.lgl')) return;
+      var l = d.createElement('div'); l.className = 'lgl'; l.style.justifyContent = 'center';
+      l.innerHTML = LGRS(r.rating) + '<b>' + r.rating.toFixed(1) + '</b>&middot;<a href="' + r.googleMapsUri + '" target="_blank" rel="noopener">' + r.userRatingCount + ' Google reviews</a>';
+      g.after(l);
+    }, function () { revBusy = 0; });
+  }
+
+  function start() { buildVisit(); init(); headerLink(); setInterval(heroReviews, 1000); }
   if (d.readyState === 'loading') d.addEventListener('DOMContentLoaded', start); else start();
 })();
