@@ -216,6 +216,7 @@
      friendlier menu titles, MOST POPULAR tag, and the "lower price than the apps" line under the hero. */
   d.head.insertAdjacentHTML('beforeend', '<style>' +
     '.order-online-background .time-based-dropdown__wrapper{display:none!important}' +
+    '@media (max-width:767px){.order-online-background .category-menu-background{display:none!important}}' +
     'ul.lmt{display:flex!important;flex-wrap:wrap;gap:10px;align-items:center}' +
     'ul.lmt>li{margin:0!important;padding:0!important}' +
     'ul.lmt>li>:not(a){display:none!important}' +
