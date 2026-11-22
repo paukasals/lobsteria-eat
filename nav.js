@@ -213,7 +213,7 @@
 
 
   /* Menu area polish (2026-11-21): hide "Available items" filter, menu switch as pill buttons,
-     friendlier menu titles, MOST POPULAR tag, and the "lower price than the apps" line under the hero. */
+     friendlier menu titles and MOST POPULAR tag. */
   d.head.insertAdjacentHTML('beforeend', '<style>' +
     '.order-online-background .time-based-dropdown__wrapper{display:none!important}' +
     '@media (max-width:767px){.order-online-background .category-menu-background{display:none!important}}' +
@@ -224,8 +224,6 @@
     'ul.lmt a.lmb:hover{background:' + NAVY + '14}' +
     'ul.lmt a.lmb.p{background:' + NAVY + '!important;color:#fff!important}' +
     '.lmp{position:absolute;top:10px;left:10px;z-index:1;background:' + RED + ';color:#fff;font:700 11px/1 Chivo,sans-serif;letter-spacing:.06em;padding:6px 10px;border-radius:99px;pointer-events:none}' +
-    '.lsv{text-align:center;margin-top:10px;font:600 14px/1.4 "Source Sans 3",sans-serif;color:' + NAVY + '}' +
-    '.lsv b{color:' + RED + '}' +
     '</style>');
   var RENAME = { 'LOBSTERIA': 'Menu', 'LOBSTERIA Event Boxes': 'Event Boxes · 24h notice' };
   var H2NAME = { 'LOBSTERIA': 'Menu', 'LOBSTERIA Event Boxes': 'Event Boxes' };
@@ -251,12 +249,6 @@
       if (getComputedStyle(box).position === 'static') box.style.position = 'relative';
       var b = d.createElement('span'); b.className = 'lmp'; b.textContent = 'MOST POPULAR'; box.appendChild(b);
     });
-    var l = q('.lgl');
-    if (l && location.pathname.replace(/\/$/, '') === '' && !q('.lsv')) {
-      var v = d.createElement('div'); v.className = 'lsv';
-      v.innerHTML = 'Same roll, lower price: <b>$30 here</b> vs $34 on delivery apps';
-      l.after(v);
-    }
   }
 
   function start() { buildVisit(); init(); headerLink(); setInterval(function () { heroReviews(); polish(); }, 1000); }
