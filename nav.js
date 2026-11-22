@@ -105,7 +105,7 @@
       } else if (a === C) {
         location.href = '/s/cart';
       } else {
-        var acc = q('[aria-label^="Cust"]');
+        var acc = q('[aria-label="Customer account"]');
         if (acc) acc.click(); else location.href = '/s/account';
       }
     });
