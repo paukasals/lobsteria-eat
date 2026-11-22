@@ -35,6 +35,8 @@
   var ICON_USER = '<svg viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M14 7a2 2 0 1 0-4 0 2 2 0 0 0 4 0ZM8 7a4 4 0 1 1 8 0 4 4 0 0 1-8 0Zm10 14h2a8 8 0 0 0-16 0h2a6 6 0 0 1 12 0Z"/></svg>';
   var ICON_CART = '<svg viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M7 14a1 1 0 0 0 0 2h13v2H7a3 3 0 0 1-1.33-5.67L4 4H2V2h6v2h12l-2 10H7Zm9.36-2 1.2-6H6.44l1.2 6h8.72ZM7.5 22a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Zm9 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/></svg>';
 
+  var ICON_PIN = '<svg viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Zm0 2a5 5 0 0 1 5 5c0 3.2-3.4 7.9-5 9.9C10.4 16.9 7 12.2 7 9a5 5 0 0 1 5-5Zm0 2.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5Z"/></svg>';
+
   var N, C, P, chipsKey = '', tIdx = -1, fix = 0, lastActive = -1, store = null, names = {}, hideT;
 
   function getStore() {
@@ -76,7 +78,7 @@
         '<a class="k" href="/s/cart">View cart &amp; checkout</a>';
     });
   }
-  function showCart() { clearTimeout(hideT); if (!N.classList.contains('on')) return; renderCart(); P.style.top = (N.getBoundingClientRect().bottom + 6) + 'px'; P.className = 'on'; }
+  function showCart() { clearTimeout(hideT); if (V) V.className = ''; if (!N.classList.contains('on')) return; renderCart(); P.style.top = (N.getBoundingClientRect().bottom + 6) + 'px'; P.className = 'on'; }
   function hideCart() { hideT = setTimeout(function () { P.className = ''; }, 250); }
 
   function buildChips(hs) {
@@ -90,7 +92,7 @@
     var hs = heads();
     if (!hs.length) return setTimeout(init, 500);
     N = d.createElement('div'); N.id = 'lnv';
-    N.innerHTML = '<div class="c"></div><button type="button" aria-label="My account and Lobster Points">' + ICON_USER + '</button>' +
+    N.innerHTML = '<div class="c"></div><button type="button" data-v="1" aria-label="Visit and contact">' + ICON_PIN + '</button><button type="button" aria-label="My account and Lobster Points">' + ICON_USER + '</button>' +
       '<button type="button" aria-label="Cart">' + ICON_CART + '<i></i></button>';
     d.body.prepend(N);
     C = N.lastChild;
@@ -102,6 +104,9 @@
       if (a.dataset.i != null) {
         tIdx = +a.dataset.i; var h = heads()[tIdx]; if (!h) return;
         fix = 12; scrollBy(0, top(h) - barBottom() - 12);
+      } else if (a.dataset.v) {
+        if (HOVER) location.href = '/visit-and-contact';
+        else if (V.className) V.className = ''; else showVisit(a);
       } else if (a === C) {
         location.href = '/s/cart';
       } else {
@@ -109,7 +114,9 @@
         if (acc) acc.click(); else location.href = '/s/account';
       }
     });
-    if (matchMedia('(hover:hover)').matches) {
+    if (HOVER) {
+      var pin = N.querySelector('[data-v]');
+      pin.addEventListener('mouseenter', function () { showVisit(pin); }); pin.addEventListener('mouseleave', hideVisit);
       C.addEventListener('mouseenter', showCart); C.addEventListener('mouseleave', hideCart);
       P.addEventListener('mouseenter', function () { clearTimeout(hideT); }); P.addEventListener('mouseleave', hideCart);
     }
@@ -140,12 +147,10 @@
     if (badge !== want) C.lastChild.textContent = want;
   }
 
-  /* Hover card on the header "Visit & Contact" link (desktop / hover devices only). */
-  function visitCard() {
-    if (!matchMedia('(hover:hover)').matches) return;
-    var link = [].slice.call(d.querySelectorAll('a.nav__link[href*="visit-and-contact"]')).find(function (a) { return a.offsetHeight; });
-    if (!link) return setTimeout(visitCard, 700);
-    var MAPS = 'https://www.google.com/maps/search/?api=1&query=LOBSTERIA%2C%20144%20NE%2027th%20St%2C%20Miami%2C%20FL%2033137';
+  /* Visit & Contact card: hover on the header link and on the pin in the sticky bar; tap the pin on phones. */
+  var HOVER = matchMedia('(hover:hover)').matches, V, vt;
+  var MAPS = 'https://www.google.com/maps/search/?api=1&query=LOBSTERIA%2C%20144%20NE%2027th%20St%2C%20Miami%2C%20FL%2033137';
+  function buildVisit() {
     d.head.insertAdjacentHTML('beforeend', '<style>' +
       '#lvc{position:fixed;z-index:30;width:300px;display:none;background:#FBF1E1;color:' + NAVY + ';border-radius:12px;box-shadow:0 8px 28px #0003;padding:18px;font:14px/1.45 "Source Sans 3",sans-serif;box-sizing:border-box;text-align:left}' +
       '#lvc.on{display:block}' +
@@ -159,7 +164,7 @@
       '#lvc .s{border:1px solid ' + NAVY + '55}' +
       '#lvc .m{font-size:13px}' +
       '</style>');
-    var V = d.createElement('div'); V.id = 'lvc';
+    V = d.createElement('div'); V.id = 'lvc';
     V.innerHTML = '<h4>LOBSTERIA · WYNWOOD</h4>' +
       '<div class="r"><span>📍</span><span><a href="' + MAPS + '" target="_blank" rel="noopener">144 NE 27th St<br>Miami, FL 33137</a><br>Look for the 1976 Airstream</span></div>' +
       '<div class="r"><span>🕒</span><span>Open nightly <b>5pm–2am</b><br>Pickup &amp; delivery on lobsteria.co</span></div>' +
@@ -167,20 +172,28 @@
       '<div class="b"><a class="p" href="' + MAPS + '" target="_blank" rel="noopener">Directions</a><a class="s" href="tel:+17868507848">Call</a></div>' +
       '<a class="m" href="/visit-and-contact">Map &amp; full contact details →</a>';
     d.body.appendChild(V);
-    var t;
-    function show() {
-      clearTimeout(t);
-      var r = link.getBoundingClientRect();
-      V.style.top = (r.bottom + 8) + 'px';
-      V.style.left = Math.max(8, Math.min(innerWidth - 308, r.left + r.width / 2 - 150)) + 'px';
-      V.className = 'on';
-    }
-    function hide() { t = setTimeout(function () { V.className = ''; }, 250); }
-    link.addEventListener('mouseenter', show); link.addEventListener('mouseleave', hide);
-    V.addEventListener('mouseenter', function () { clearTimeout(t); }); V.addEventListener('mouseleave', hide);
+    V.addEventListener('mouseenter', function () { clearTimeout(vt); });
+    V.addEventListener('mouseleave', hideVisit);
     addEventListener('scroll', function () { V.className = ''; }, { passive: true });
+    d.addEventListener('click', function (e) { if (!e.target.closest('#lvc,[data-v]')) V.className = ''; });
+  }
+  function showVisit(el) {
+    clearTimeout(vt);
+    if (P) P.className = '';
+    var r = el.getBoundingClientRect();
+    V.style.top = (r.bottom + 8) + 'px';
+    V.style.left = Math.max(8, Math.min(innerWidth - 308, r.left + r.width / 2 - 150)) + 'px';
+    V.className = 'on';
+  }
+  function hideVisit() { vt = setTimeout(function () { V.className = ''; }, 250); }
+  function headerLink() {
+    if (!HOVER) return;
+    var link = [].slice.call(d.querySelectorAll('a.nav__link[href*="visit-and-contact"]')).find(function (a) { return a.offsetHeight; });
+    if (!link) return setTimeout(headerLink, 700);
+    link.addEventListener('mouseenter', function () { showVisit(link); });
+    link.addEventListener('mouseleave', hideVisit);
   }
 
-  function start() { init(); visitCard(); }
+  function start() { buildVisit(); init(); headerLink(); }
   if (d.readyState === 'loading') d.addEventListener('DOMContentLoaded', start); else start();
 })();
