@@ -211,6 +211,53 @@
     }, function () { revBusy = 0; });
   }
 
-  function start() { buildVisit(); init(); headerLink(); setInterval(heroReviews, 1000); }
+
+  /* Menu area polish (2026-11-21): hide "Available items" filter, menu switch as pill buttons,
+     friendlier menu titles, MOST POPULAR tag, and the "lower price than the apps" line under the hero. */
+  d.head.insertAdjacentHTML('beforeend', '<style>' +
+    '.order-online-background .time-based-dropdown__wrapper{display:none!important}' +
+    'ul.lmt{display:flex!important;flex-wrap:wrap;gap:10px;align-items:center}' +
+    'ul.lmt>li{margin:0!important;padding:0!important}' +
+    'ul.lmt>li>:not(a){display:none!important}' +
+    'ul.lmt a.lmb{display:inline-block;padding:10px 20px;border:1.5px solid ' + NAVY + ';border-radius:99px;font:700 14px Chivo,sans-serif;letter-spacing:.02em;text-transform:none;color:' + NAVY + '!important;background:transparent;text-decoration:none}' +
+    'ul.lmt a.lmb:hover{background:' + NAVY + '14}' +
+    'ul.lmt a.lmb.p{background:' + NAVY + ';color:#fff!important}' +
+    '.lmp{position:absolute;top:10px;left:10px;z-index:1;background:' + RED + ';color:#fff;font:700 11px/1 Chivo,sans-serif;letter-spacing:.06em;padding:6px 10px;border-radius:99px;pointer-events:none}' +
+    '.lsv{text-align:center;margin-top:10px;font:600 14px/1.4 "Source Sans 3",sans-serif;color:' + NAVY + '}' +
+    '.lsv b{color:' + RED + '}' +
+    '</style>');
+  var RENAME = { 'LOBSTERIA': 'Menu', 'LOBSTERIA Event Boxes': 'Event Boxes · 24h notice' };
+  var H2NAME = { 'LOBSTERIA': 'Menu', 'LOBSTERIA Event Boxes': 'Event Boxes' };
+  function setText(el, t) { if (el.textContent.trim() !== t) el.textContent = t; }
+  function polish() {
+    var root = q('.order-online-background'); if (!root) return;
+    [].forEach.call(root.querySelectorAll('ul.nav__main'), function (ul) {
+      if (ul.closest('.bg-sticky')) return;
+      ul.classList.add('lmt');
+      [].forEach.call(ul.children, function (li) {
+        var a = li.querySelector('a.nav__link'); if (!a) return;
+        var t = a.textContent.trim();
+        if (t === 'More') { li.style.display = 'none'; return; }
+        a.classList.add('lmb');
+        if (RENAME[t]) { a.classList.toggle('p', t === 'LOBSTERIA'); setText(a, RENAME[t]); }
+      });
+    });
+    [].forEach.call(root.querySelectorAll('h2'), function (h) { var t = h.textContent.trim(); if (H2NAME[t]) setText(h, H2NAME[t]); });
+    [].forEach.call(root.querySelectorAll('.item__card'), function (c) {
+      var t = c.querySelector('.w-product-title');
+      if (!t || !/^WARM CONNECTICUT LOBSTER ROLL$/i.test(t.textContent.trim()) || c.querySelector('.lmp')) return;
+      var img = c.querySelector('img'); var box = img ? img.parentElement : c;
+      if (getComputedStyle(box).position === 'static') box.style.position = 'relative';
+      var b = d.createElement('span'); b.className = 'lmp'; b.textContent = 'MOST POPULAR'; box.appendChild(b);
+    });
+    var l = q('.lgl');
+    if (l && location.pathname.replace(/\/$/, '') === '' && !q('.lsv')) {
+      var v = d.createElement('div'); v.className = 'lsv';
+      v.innerHTML = 'Same roll, lower price: <b>$30 here</b> vs $34 on delivery apps';
+      l.after(v);
+    }
+  }
+
+  function start() { buildVisit(); init(); headerLink(); setInterval(function () { heroReviews(); polish(); }, 1000); }
   if (d.readyState === 'loading') d.addEventListener('DOMContentLoaded', start); else start();
 })();
